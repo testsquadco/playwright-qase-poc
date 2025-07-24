@@ -1,0 +1,24 @@
+{
+  "name": "playwright-qase-poc",
+  "version": "1.0.0",
+  "description": "Playwright project with Qase.io integration for test reporting",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "install:browsers": "playwright install chromium"
+  },
+  "keywords": ["playwright", "qase", "testing", "typescript"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "playwright-qase-reporter": "^2.0.0",
+    "dotenv": "^16.3.0"
+  }
+}
