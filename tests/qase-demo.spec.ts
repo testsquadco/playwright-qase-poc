@@ -1,40 +1,35 @@
 import { test, expect } from '@playwright/test';
 import { qase } from 'playwright-qase-reporter';
 
-test.describe('Qase.io Login Flow', () => {
-  test('should perform login with test credentials', async ({ page }) => {
-    // Link this test to Qase test case ID 1
+test.describe('BugBug.io Login Tests - Testing Both Success and Failure Scenarios', () => {
+  test('Testing what happens when we try to login with wrong credentials', async ({ page }) => {
     qase.id(1);
-
-    // Step 1: Navigate to login page
-    await page.goto('https://qase.io/login');
+    await page.goto('https://app.bugbug.io');
     await page.waitForLoadState('networkidle');
-
-    // Step 2: Enter login/email
-    await page.getByPlaceholder('Email').fill('test');
-
-    // Step 3: Enter password
-    await page.getByPlaceholder('Password').fill('test');
-
-    // Step 4: Check "Remember me"
-    const rememberMe = page.locator('label:has-text("Remember me") input[type="checkbox"]');
-    await rememberMe.check();
-
-    // Step 5: Click login
-    await page.getByRole('button', { name: 'Login' }).click();
-
-    // Step 6: Wait briefly and check for login error or redirect
-    await page.waitForTimeout(1500);
-
-    // Try-catch in case login fails (expected for dummy creds)
+    await page.fill('input[name="email"]', 'eliya@testsquad.co');
+    await page.fill('input[name="password"]', 'demo1234');
     try {
-      await expect(page.locator('text=Dashboard')).toBeVisible({ timeout: 3000 });
+      await page.getByRole('button', { name: 'Log in' }).click();
     } catch {
-      // Log expected failure
-      console.log('Login failed as expected with test credentials');
+      await page.locator('div:has-text("Log in")').click();
     }
+    await page.waitForTimeout(2000);
+    await expect(page.getByText('Unable to log in with provided credentials.')).toBeVisible();
+    expect(page.url()).toContain('bugbug');
+  });
 
-    // Final assertion: still on qase.io domain
-    expect(page.url()).toContain('qase.io');
+  test('Testing what happens when we try to login with valid credentials', async ({ page }) => {
+    qase.id(2);
+    await page.goto('https://app.bugbug.io');
+    await page.waitForLoadState('networkidle');
+    await page.fill('input[name="email"]', 'eliya@testsquad.co');
+    await page.fill('input[name="password"]', 'demo1234');
+    try {
+      await page.getByRole('button', { name: 'Log in' }).click();
+    } catch {
+      await page.locator('div:has-text("Log in")').click();
+    }
+    await page.waitForTimeout(5000);
+    await expect(page.getByRole('heading')).toContainText('Your projects');
   });
 });
